@@ -2,6 +2,9 @@
 
 作業涵蓋神經網路基礎、CNN 調參實驗與 FC/Dropout 正則化分析，使用工具包含 scikit-learn、PyTorch、CIFAR-10 資料集。
 
+ 
+🌐 **Portfolio 網站：[https://tai-ju.github.io/deep-learning-homework/](https://tai-ju.github.io/deep-learning-homework/)**
+
 ---
 
 ## 📁 目錄結構
