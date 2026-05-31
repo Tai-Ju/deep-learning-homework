@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep Learning Homework Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0d0d;
+    --surface: #141414;
+    --surface2: #1c1c1c;
+    --border: #2a2a2a;
+    --accent: #c8f135;
+    --accent2: #6ee7b7;
+    --text: #e8e8e8;
+    --muted: #666;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(13,13,13,0.85);
+    backdrop-filter: blur(10px);
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 6rem 2.5rem 4rem;
+    max-width: 1100px; margin: 0 auto;
+    position: relative;
+  }
+
+  .hero-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 500;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.35s forwards;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .hero-desc {
+    max-width: 520px;
+    font-size: 1rem;
+    color: #999;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.5s forwards;
+  }
+
+  .hero-stack {
+    display: flex; gap: 0.75rem; flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.65s forwards;
+  }
+
+  .chip {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .chip.active { border-color: var(--accent); color: var(--accent); }
+
+  /* ─── SECTION ─── */
+  section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5rem 2.5rem;
+  }
+
+  .section-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-size: 2rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ─── HW CARDS ─── */
+  .hw-card {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    transition: border-color 0.3s;
+  }
+
+  .hw-card:hover { border-color: #444; }
+
+  .hw-header {
+    display: flex; align-items: center; gap: 1.5rem;
+    padding: 1.75rem 2rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hw-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--bg);
+    background: var(--accent);
+    padding: 3px 8px;
+    border-radius: 2px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .hw-title { font-size: 1.1rem; font-weight: 500; }
+  .hw-subtitle { font-size: 13px; color: var(--muted); font-family: var(--mono); margin-top: 2px; }
+
+  .hw-body { padding: 2rem; background: var(--surface); }
+
+  .hw-desc { font-size: 0.95rem; color: #aaa; margin-bottom: 1.75rem; line-height: 1.8; }
+
+  /* experiments grid */
+  .exp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 1.75rem;
+  }
+
+  .exp-cell {
+    background: var(--surface2);
+    padding: 1rem 1.25rem;
+  }
+
+  .exp-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent2);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.35rem;
+  }
+
+  .exp-name { font-size: 13px; font-weight: 500; margin-bottom: 0.25rem; }
+  .exp-detail { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+
+  /* result table */
+  .result-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    font-family: var(--mono);
+    margin-bottom: 1.75rem;
+  }
+
+  .result-table th {
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+  }
+
+  .result-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #1e1e1e;
+    color: #ccc;
+  }
+
+  .result-table tr:last-child td { border-bottom: none; }
+  .result-table .best { color: var(--accent); font-weight: 500; }
+
+  /* image gallery */
+  .img-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .img-cell {
+    background: #0a0a0a;
+    padding: 0.75rem;
+    display: flex; flex-direction: column; align-items: center;
+  }
+
+  .img-cell img {
+    width: 100%; height: auto;
+    border-radius: 2px;
+    display: block;
+  }
+
+  .img-caption {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 0.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── CODE BLOCK ─── */
+  .code-block {
+    background: #090909;
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--accent);
+    border-radius: 4px;
+    padding: 1.25rem 1.5rem;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #aaa;
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+  }
+
+  .code-block .kw { color: var(--accent); }
+  .code-block .str { color: var(--accent2); }
+  .code-block .cmt { color: #555; }
+
+  /* ─── STACK SECTION ─── */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .stack-cell {
+    background: var(--surface);
+    padding: 1.5rem;
+  }
+
+  .stack-icon {
+    font-family: var(--mono);
+    font-size: 18px;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+
+  .stack-name { font-weight: 500; font-size: 15px; margin-bottom: 0.35rem; }
+  .stack-role { font-size: 13px; color: var(--muted); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 2.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  footer p { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+  .gh-link {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid var(--accent);
+    padding: 6px 14px;
+    border-radius: 2px;
+    letter-spacing: 0.08em;
+    transition: background 0.2s, color 0.2s;
+  }
+  .gh-link:hover { background: var(--accent); color: var(--bg); }
+
+  /* ─── DIVIDER ─── */
+  hr { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+  /* ─── ANIMATION ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">DL_HOMEWORK /</span>
+  <ul class="nav-links">
+    <li><a href="#hw1">HW1</a></li>
+    <li><a href="#hw2">HW2</a></li>
+    <li><a href="#hw3">HW3</a></li>
+    <li><a href="#stack">環境</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="hero-label">DEEP LEARNING · 142216015</p>
+  <h1>Neural Network<br><em>Experiments</em></h1>
+  <p class="hero-desc">
+    三份作業涵蓋 MLP 決策邊界可視化、AlexNet 超參數調整、FC 架構與 Dropout 正則化分析，
+    資料集橫跨 sklearn make_circles 與 CIFAR-10。
+  </p>
+  <div class="hero-stack">
+    <span class="chip active">Python</span>
+    <span class="chip active">PyTorch</span>
+    <span class="chip">scikit-learn</span>
+    <span class="chip">CIFAR-10</span>
+    <span class="chip">TensorBoard</span>
+    <span class="chip">matplotlib</span>
+  </div>
+</div>
+
+<hr>
+
+<!-- HW1 -->
+<section id="hw1">
+  <p class="section-num">01 / HOMEWORK</p>
+  <h2 class="section-title">Neural Network Playground</h2>
+
+  <div class="hw-card">
+    <div class="hw-header">
+      <span class="hw-num">HW1</span>
+      <div>
+        <div class="hw-title">MLP 分類實驗 — make_circles</div>
+        <div class="hw-subtitle">sklearn · MLPClassifier · 非線性特徵工程</div>
+      </div>
+    </div>
+    <div class="hw-body">
+      <p class="hw-desc">
+        模擬 Google Neural Network Playground，對環形資料集進行二元分類。
+        手動加入 X₁², X₂², X₁·X₂, sin(X₁), sin(X₂) 五個非線性特徵，
+        並比較四種隱藏層配置的收斂速度與最終準確率。
+      </p>
+
+      <div class="exp-grid">
+        <div class="exp-cell">
+          <div class="exp-label">DATASET</div>
+          <div class="exp-name">make_circles</div>
+          <div class="exp-detail">500 samples, noise=0.3</div>
+        </div>
+        <div class="exp-cell">
+          <div class="exp-label">FEATURES</div>
+          <div class="exp-name">7 維輸入</div>
+          <div class="exp-detail">X₁ X₂ + 5 非線性特徵</div>
+        </div>
+        <div class="exp-cell">
+          <div class="exp-label">OPTIMIZER</div>
+          <div class="exp-name">Adam</div>
+          <div class="exp-detail">lr=0.001, batch=10</div>
+        </div>
+        <div class="exp-cell">
+          <div class="exp-label">ACTIVATION</div>
+          <div class="exp-name">ReLU</div>
+          <div class="exp-detail">max_iter=1000</div>
+        </div>
+      </div>
+
+      <table class="result-table">
+        <thead>
+          <tr>
+            <th>隱藏層配置</th>
+            <th>Train Acc</th>
+            <th>Test Acc</th>
+            <th>備註</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>4+2（預設）</td>
+            <td>75.4%</td>
+            <td>72.7%</td>
+            <td>容量不足，收斂慢</td>
+          </tr>
+          <tr>
+            <td>8+4</td>
+            <td>78.3%</td>
+            <td class="best">77.3%</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>16+8</td>
+            <td>79.1%</td>
+            <td class="best">77.3%</td>
+            <td>最低 loss</td>
+          </tr>
+          <tr>
+            <td>32+16</td>
+            <td>78.0%</td>
+            <td>70.7%</td>
+            <td>過大，略有過擬合</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="img-row">
+        <div class="img-cell">
+          <img src="hw1_neural_network_playground/hw1_decision_boundary.png" alt="Decision Boundary">
+          <span class="img-caption">DECISION BOUNDARY · TEST ACC=72.67%</span>
+        </div>
+        <div class="img-cell">
+          <img src="hw1_neural_network_playground/hw1_loss_curve.png" alt="Loss Curve">
+          <span class="img-caption">TRAINING LOSS CURVE</span>
+        </div>
+        <div class="img-cell">
+          <img src="hw1_neural_network_playground/hw1_hidden_layer_experiment.png" alt="Hidden Layer Experiment">
+          <span class="img-caption">HIDDEN LAYER COMPARISON</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- HW2 -->
+<section id="hw2">
+  <p class="section-num">02 / HOMEWORK</p>
+  <h2 class="section-title">AlexNet 超參數調整</h2>
+
+  <div class="hw-card">
+    <div class="hw-header">
+      <span class="hw-num">HW2</span>
+      <div>
+        <div class="hw-title">簡化版 AlexNet — CIFAR-10</div>
+        <div class="hw-subtitle">PyTorch · TensorBoard · one-at-a-time 實驗</div>
+      </div>
+    </div>
+    <div class="hw-body">
+      <p class="hw-desc">
+        基於 CIFAR-10（32×32 RGB，10 類）設計簡化版 AlexNet，
+        採用 one-at-a-time 策略逐一調整四項超參數，
+        觀察每項變動對 train loss 與 test accuracy 的獨立影響。
+      </p>
+
+      <div class="exp-grid">
+        <div class="exp-cell">
+          <div class="exp-label">EXP A</div>
+          <div class="exp-name">學習率</div>
+          <div class="exp-detail">0.1 / 0.01 / 0.001</div>
+        </div>
+        <div class="exp-cell">
+          <div class="exp-label">EXP B</div>
+          <div class="exp-name">通道數</div>
+          <div class="exp-detail">ch=6 / 16 / 32</div>
+        </div>
+        <div class="exp-cell">
+          <div class="exp-label">EXP C</div>
+          <div class="exp-name">FC 大小</div>
+          <div class="exp-detail">128 / 256 / 512</div>
+        </div>
+        <div class="exp-cell">
+          <div class="exp-label">EXP D</div>
+          <div class="exp-name">Dropout</div>
+          <div class="exp-detail">0.3 / 0.5 / 0.7</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+<span class="cmt"># 執行實驗</span>
+<span class="kw">python</span> Homework2_AlexNet調參.py
+
+<span class="cmt"># 開啟 TensorBoard</span>
+<span class="kw">tensorboard</span> --logdir=<span class="str">runs</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- HW3 -->
+<section id="hw3">
+  <p class="section-num">03 / HOMEWORK</p>
+  <h2 class="section-title">FC 架構 與 Dropout 過擬合分析</h2>
+
+  <div class="hw-card">
+    <div class="hw-header">
+      <span class="hw-num">HW3</span>
+      <div>
+        <div class="hw-title">FC Size vs Dropout Rate — 泛化能力分析</div>
+        <div class="hw-subtitle">PyTorch · Conv feature extractor fixed · overfitting diagnosis</div>
+      </div>
+    </div>
+    <div class="hw-body">
+      <p class="hw-desc">
+        固定 Conv 特徵提取器（3 層 Conv → AdaptiveAvgPool → 6400 維），
+        分別比較 Small / Medium / Large 三種 FC 架構，
+        以及 dropout ∈ {0.0, 0.3, 0.5} 對 train/test accuracy gap 的影響。
+        Train − Test &gt; 0.1 自動標記為過擬合警示。
+      </p>
+
+      <div class="exp-grid">
+        <div class="exp-cell">
+          <div class="exp-label">FEATURE DIM</div>
+          <div class="exp-name">6400-D</div>
+          <div class="exp-detail">256 × 5 × 5</div>
+        </div>
+        <div class="exp-cell">
+          <div class="exp-label">FC SMALL</div>
+          <div class="exp-name">512 → 10</div>
+          <div class="exp-detail">1 層</div>
+        </div>
+        <div class="exp-cell">
+          <div class="exp-label">FC MEDIUM</div>
+          <div class="exp-name">1024 → 256 → 10</div>
+          <div class="exp-detail">2 層</div>
+        </div>
+        <div class="exp-cell">
+          <div class="exp-label">FC LARGE</div>
+          <div class="exp-name">2048 → 1024 → 10</div>
+          <div class="exp-detail">2 層</div>
+        </div>
+      </div>
+
+      <table class="result-table">
+        <thead>
+          <tr>
+            <th>配置</th>
+            <th>Dropout</th>
+            <th>Train Acc</th>
+            <th>Test Acc</th>
+            <th>Gap</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Small</td><td>0.0</td>
+            <td>—</td><td>—</td>
+            <td style="color:#e24b4a;">⚠ 過擬合風險</td>
+          </tr>
+          <tr>
+            <td>Small</td><td>0.3</td>
+            <td>—</td><td>—</td><td>穩定</td>
+          </tr>
+          <tr>
+            <td>Small</td><td class="best">0.5</td>
+            <td>—</td><td>—</td><td class="best">最小 gap</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="code-block">
+<span class="cmt"># 執行實驗 + 過擬合診斷</span>
+<span class="kw">python</span> Homework3_FC與Dropout調參.py
+
+<span class="cmt"># 輸出示意</span>
+FC_small_dp0.0    Train: 0.8512  Test: 0.7031  Gap: 0.1481  ⚠ Possible overfitting
+FC_small_dp0.3    Train: 0.7923  Test: 0.7244  Gap: 0.0679  OK
+FC_small_dp0.5    Train: 0.7611  Test: <span class="str">0.7318</span>  Gap: 0.0293  Stable
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- STACK -->
+<section id="stack">
+  <p class="section-num">ENV / STACK</p>
+  <h2 class="section-title">技術環境</h2>
+
+  <div class="stack-grid">
+    <div class="stack-cell">
+      <div class="stack-icon">&gt;_</div>
+      <div class="stack-name">Python 3.10+</div>
+      <div class="stack-role">主要開發語言</div>
+    </div>
+    <div class="stack-cell">
+      <div class="stack-icon">⚡</div>
+      <div class="stack-name">PyTorch</div>
+      <div class="stack-role">CNN 訓練 / GPU 加速</div>
+    </div>
+    <div class="stack-cell">
+      <div class="stack-icon">◎</div>
+      <div class="stack-name">scikit-learn</div>
+      <div class="stack-role">MLPClassifier / 資料前處理</div>
+    </div>
+    <div class="stack-cell">
+      <div class="stack-icon">▦</div>
+      <div class="stack-name">CIFAR-10</div>
+      <div class="stack-role">50K train / 10K test，10 類</div>
+    </div>
+    <div class="stack-cell">
+      <div class="stack-icon">▷</div>
+      <div class="stack-name">TensorBoard</div>
+      <div class="stack-role">Loss / Accuracy 即時視覺化</div>
+    </div>
+    <div class="stack-cell">
+      <div class="stack-icon">∿</div>
+      <div class="stack-name">matplotlib</div>
+      <div class="stack-role">靜態圖表輸出</div>
+    </div>
+  </div>
+
+  <br>
+  <div class="code-block">
+<span class="cmt"># 安裝所有依賴</span>
+<span class="kw">pip</span> install torch torchvision tensorboard scikit-learn matplotlib numpy
+  </div>
+</section>
+
+<hr>
+
+<footer>
+  <p>學號 142216015 · Deep Learning Homework · 2025</p>
+  <a class="gh-link" href="https://github.com/Tai-Ju/deep-learning-homework">VIEW ON GITHUB →</a>
+</footer>
+
+</body>
+</html>
